@@ -108,25 +108,33 @@ function metaDemo (metadata) {
     wfreq.text(`wfreq: ${metadata["wfreq"]}`);
  }
 
-// function getNewData() {
-//     let dropdown = d3.select("#selDataset");
-//     let dataset = dropdown.property("value");
-//     let data = [];
+function getNewData() {
+    let dropdown = d3.select("#selDataset");
+    let dataset = dropdown.property("value");
+    let data = [];
 
-//     let indexData = names.indexOf(dataset);
-//     data = samples[indexData];
+    let indexData = names.indexOf(dataset);
+    data = samples[indexData];
 
-//     updatePlotly(data);
+    updatePlotly(data);
+};
 
-// };
+function updatePlotly(newData) {
+    let x_values = newData["sample_values"].slice(0, 10).reverse();
+    let y_values = newData["otu_ids"].slice(0, 10).reverse();
+    let text_values = newData["otu_labels"].slice(0, 10).reverse();
 
-// function updatePlotly(newData) {
-//     let x_values = sample_values.slice(0, 10).reverse();
-//     let y_values = otu_ids.slice(0, 10).reverse();
-//     let text_values = otu_labels.slice(0, 10).reverse();
+    Plotly.restyle("bar", "x", [x_values]);
+    Plotly.restyle("bar", "y", [y_values]);
+    Plotly.restyle("bar", "text", [text_values]);
 
-//     Plotly.restyle("bar", x_values, y_values, text_values)
-// };
+    Plotly.restyle("bubble", "x", newData["otu_ids"]);
+    Plotly.restyle("bubble", "y", newData["sample_values"]);
+    Plotly.restyle("bubble", "size", newData["sample_values"]);
+    Plotly.restyle("bubble", "color", newData["otu_ids"]);
+    Plotly.restyle("bubble", "text", newData["otu_labels"]);
+
+};
 
 
 // get the data and then generate everything for the webpage
@@ -140,7 +148,14 @@ d3.json(url).then(function(data){
     bubbleChart(otu_ids_num[0], sample_values[0], otu_labels[0]);
     metaDemo(metadata[0]);
 
-    // d3.selectAll("#selDataset").on("change", getNewData);
+    d3.select("#selDataset")
+        .selectAll("myOptions")
+            .data(names)
+        .enter()
+            .append('option')
+        .text(function (name) {return name;})
+
+    d3.selectAll("#selDataset").on("change", getNewData);
 
 });
 
