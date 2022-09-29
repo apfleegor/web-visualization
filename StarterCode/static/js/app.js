@@ -86,6 +86,8 @@ function bubbleChart(otu_ids, sample_values, otu_labels) {
 // create the text for the metadata section
 function metaDemo (metadata) {
 
+    // d3.select("#sample-metadata").append("ul")
+
     let id = d3.select("ul").append("li");
     id.text(`id: ${metadata["id"]}`);
 
@@ -115,24 +117,54 @@ function getNewData() {
 
     let indexData = names.indexOf(dataset);
     data = samples[indexData];
+    let otu_id = otu_ids[indexData];
 
-    updatePlotly(data);
+    updatePlotly(data, otu_id);
+
+    // var container = document.getElementById("#metaID");
+    // container.replaceChildren();
+    d3.selectAll("li").remove();
+    metaDemo(metadata[indexData]);
 };
 
-function updatePlotly(newData) {
+function updatePlotly(newData, otu_ids) {
+
+    // get otu ids
+
     let x_values = newData["sample_values"].slice(0, 10).reverse();
-    let y_values = newData["otu_ids"].slice(0, 10).reverse();
+    let y_values = otu_ids.slice(0, 10).reverse();
     let text_values = newData["otu_labels"].slice(0, 10).reverse();
 
-    Plotly.restyle("bar", "x", [x_values]);
-    Plotly.restyle("bar", "y", [y_values]);
-    Plotly.restyle("bar", "text", [text_values]);
+    // let new_y_values = [];
 
-    Plotly.restyle("bubble", "x", newData["otu_ids"]);
-    Plotly.restyle("bubble", "y", newData["sample_values"]);
-    Plotly.restyle("bubble", "size", newData["sample_values"]);
-    Plotly.restyle("bubble", "color", newData["otu_ids"]);
-    Plotly.restyle("bubble", "text", newData["otu_labels"]);
+    // for (let i = 0; i < y_values.length; i++) {
+    //     new_y_values.push(`OTU ${y_values[i]}`)
+    // };
+
+    // console.log(x_values);
+
+    var updateBar = {
+        x: [x_values],
+        y: [y_values],
+        text: [text_values]
+    };
+    Plotly.restyle("bar", updateBar);
+
+    var updateBubble = {
+        x: [newData["otu_ids"]],
+        y: [newData["sample_values"]],
+        size: [newData["sample_values"]],
+        color: [newData["otu_ids"]],
+        text: [newData["otu_labels"]]
+    };
+
+    Plotly.restyle("bubble", updateBubble);
+
+    // Plotly.restyle("bubble", "x", newData["otu_ids"]);
+    // Plotly.restyle("bubble", "y", newData["sample_values"]);
+    // Plotly.restyle("bubble", "size", newData["sample_values"]);
+    // Plotly.restyle("bubble", "color", newData["otu_ids"]);
+    // Plotly.restyle("bubble", "text", newData["otu_labels"]);
 
 };
 
